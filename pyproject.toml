@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wiki-graph"
+version = "0.1.0"
+description = "Scraper modular para construir grafos da Wikipedia"
+readme = "README.md"
+authors = [
+    { name = "Seu Nome", email = "email@example.com" }
+]
+license = {text = "MIT"}
+requires-python = ">=3.9"
+
+dependencies = [
+    "requests>=2.26",
+    "beautifulsoup4>=4.12",
+    "pytest>=7.0",
+    "python-dotenv>=1.0"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

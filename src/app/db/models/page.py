@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Float
 from app.db.base import Base
 
 
@@ -13,3 +13,4 @@ class Page(Base):
     num_revisions = Column(Integer)
     links_out_count = Column(Integer)
     links_in_count = Column(Integer)
+    pagerank_score = Column(Float, default=0.0)

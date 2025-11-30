@@ -1,5 +1,14 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, Float
 from db.base import Base
+
+
+class Link(Base):
+    __tablename__ = "links"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    source_page_id = Column(Integer, ForeignKey("pages.page_id"), nullable=False)
+    target_page_id = Column(Integer, ForeignKey("pages.page_id"), nullable=False)
+    anchor_text = Column(String, nullable=True)
 
 
 class Page(Base):

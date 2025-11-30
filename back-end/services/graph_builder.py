@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
-from db.db_models.page import Page
-from db.db_models.link import Link
+from db.db_models import Page, Link
 from models.graph_objects import PageNode, PageLink
 
 

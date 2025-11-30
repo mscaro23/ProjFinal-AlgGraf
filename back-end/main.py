@@ -5,15 +5,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from dotenv import load_dotenv
 from uvicorn import Server, Config
-import logging
+from settings.logging_setup import logger
 
-from settings.logging_setup import setup_logger
 from routers.api import router as api_router
 import db.base as db_base
 import db.engine as db_engine
-
-
-setup_logger()
 
 db_base.Base.metadata.create_all(bind=db_engine.engine)
 
@@ -37,7 +33,7 @@ server = Server(
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     exc_str = f"{exc}".replace("\n", " ").replace("   ", " ")
-    logging.error(f"{request}: {exc_str}")
+    logger.error(f"{request}: {exc_str}")
     content = {"status_code": 422, "message": exc_str, "data": None}
     return JSONResponse(
         content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY
@@ -70,7 +66,7 @@ async def catch_exceptions_middleware(request: Request, call_next):
     try:
         return await call_next(request)
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         return Response("Internal server error", status_code=500)
 
 

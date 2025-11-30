@@ -4,12 +4,16 @@ from starlette.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from dotenv import load_dotenv
-
 from uvicorn import Server, Config
 import logging
 
+from settings.logging_setup import setup_logger
+from routers.api import router as api_router
+
+setup_logger()
 
 app = FastAPI()
+app.include_router(api_router)
 load_dotenv()
 
 server = Server(
@@ -55,7 +59,6 @@ async def custom_error_handling(request: Request, exc: Exception):
 #     allow_methods=["*"],
 #     allow_headers=["*"],
 # )
-
 
 
 async def catch_exceptions_middleware(request: Request, call_next):

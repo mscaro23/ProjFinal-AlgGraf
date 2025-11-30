@@ -1,0 +1,16 @@
+# General
+.env
+*.pyc
+**/__pycache__
+**/.pytest_cache
+**/*.env
+
+# For back-end/
+back-end/dist
+**/poetry-chef*
+
+# For front-end/
+front-end/.angular
+**node_modules**
+
+

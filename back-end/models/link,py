@@ -1,0 +1,19 @@
+from pydantic import BaseModel
+from typing import Optional
+
+
+class LinkBase(BaseModel):
+    source_page_id: int
+    target_page_id: int
+    anchor_text: Optional[str] = None
+
+
+class LinkCreate(LinkBase):
+    pass
+
+
+class LinkResponse(LinkBase):
+    id: int
+
+    class Config:
+        orm_mode = True

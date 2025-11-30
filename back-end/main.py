@@ -9,12 +9,17 @@ import logging
 
 from settings.logging_setup import setup_logger
 from routers.api import router as api_router
+import db.base as db_base
+import db.engine as db_engine
+
 
 setup_logger()
 
+db_base.Base.metadata.create_all(bind=db_engine.engine)
+
+
 app = FastAPI()
 app.include_router(api_router)
-load_dotenv()
 
 server = Server(
     Config(

@@ -1,20 +1,62 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
+from typing import Optional, List
+
+"""
+Como boa prática, utilizar uma classe/model para cada tipo de requisição
+    ModelBase -> Model padrao
+    ModelCreate -> criar novo model (POST)
+    ModelUpdate -> atualizar model (PUT, PATCH)
+    ModelResponse -> retornar model (GET)
+    ModelInput -> payload (POST, PUT, PATCH)
+"""
 
 
-@dataclass
-class PageNode:
-    page_id: int
+# ---------- PAGE ----------
+class PageBase(BaseModel):
     title: str
     url: str
-    length_chars: int
-    num_editors: int
-    num_revisions: int
-    links_out_count: int
-    links_in_count: int = 0
+    length_chars: Optional[int] = None
+    num_editors: Optional[int] = None
+    num_revisions: Optional[int] = None
+    links_out_count: Optional[int] = None
+    links_in_count: Optional[int] = None
+    pagerank_score: Optional[float] = 0.0
 
 
-@dataclass
-class PageLink:
+class PageCreate(PageBase):
+    pass
+
+
+class PageUpdate(BaseModel):
+    pagerank_score: Optional[float] = None
+
+
+class PageResponse(PageBase):
+    page_id: int
+
+    class Config:
+        from_attributes = True
+
+
+# ---------- LINK ----------
+class LinkBase(BaseModel):
     source_page_id: int
     target_page_id: int
-    anchor_text: str
+    anchor_text: Optional[str] = None
+
+
+class LinkCreate(LinkBase):
+    pass
+
+
+class LinkResponse(LinkBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+# ---------- GRAFO ----------
+class GraphInput(BaseModel):
+    pages: List[PageCreate]
+    links: List[LinkCreate]

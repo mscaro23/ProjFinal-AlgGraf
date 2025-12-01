@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "wiki-graph"
+version = "0.1.0"
+description = "Scraper modular para construir grafos da Wikipedia"
+readme = "README.md"
+authors = []
+
+[tool.poetry.dependencies]
+python = ">=3.10"
+requests = ">=2.26"
+pytest = ">=7.0"
+python-dotenv = ">=1.0"
+fastapi = "^0.122.1"
+uvicorn = "^0.38.0"
+sqlalchemy = "^2.0.44"
+psycopg2-binary = "^2.9.11"
+alembic = "^1.17.2"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+

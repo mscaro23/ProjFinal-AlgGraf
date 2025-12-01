@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
 from app.db.models.page import Page
 from app.db.models.link import Link
-from app.models.graph_objects import PageNode, PageLink
+from app.models.graph_objects import PageNode, LinkNode
 
 
-def save_graph(session: Session, node: PageNode, edges: list[PageLink]):
+def save_graph(session: Session, node: PageNode, edges: list[LinkNode]):
     """
     Salva um nó (Page) e suas arestas (Links) no banco de dados.
     """
@@ -38,6 +38,7 @@ def save_graph(session: Session, node: PageNode, edges: list[PageLink]):
         new_link = Link(
             source_page_id=edge.source_page_id,
             target_page_id=edge.target_page_id,
+            target_title=edge.target_title,
             anchor_text=edge.anchor_text,
         )
         session.add(new_link)

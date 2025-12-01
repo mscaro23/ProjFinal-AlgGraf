@@ -8,4 +8,5 @@ class Link(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     source_page_id = Column(Integer, ForeignKey("pages.page_id"), nullable=False)
     target_page_id = Column(Integer, ForeignKey("pages.page_id"), nullable=False)
+    target_title = Column(String, nullable=True)
     anchor_text = Column(String, nullable=True)

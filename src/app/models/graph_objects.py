@@ -14,7 +14,8 @@ class PageNode:
 
 
 @dataclass
-class PageLink:
+class LinkNode:
     source_page_id: int
     target_page_id: int
     anchor_text: str
+    target_title: str = ""

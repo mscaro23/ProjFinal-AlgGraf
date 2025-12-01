@@ -37,6 +37,7 @@ def save_graph(session: Session, node: PageNode, edges: list[PageLink]):
         new_link = Link(
             source_page_id=edge.source_page_id,
             target_page_id=edge.target_page_id,
+            target_title=edge.target_title,
             anchor_text=edge.anchor_text,
         )
         session.add(new_link)

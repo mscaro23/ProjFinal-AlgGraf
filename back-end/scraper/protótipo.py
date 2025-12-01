@@ -133,10 +133,11 @@ class WikiScraper:
                 continue  # ignora redlinks ou páginas que não existem
 
             links.append(
-                PageLink(
+                LinkNode(
                     source_page_id=source_page_id,
                     target_page_id=target_id,
                     anchor_text=anchor,
+                    target_title=target_title,
                 )
             )
 

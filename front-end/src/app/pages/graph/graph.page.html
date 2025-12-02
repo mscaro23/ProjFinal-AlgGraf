@@ -1,0 +1,5 @@
+<div *ngIf="loading">Carregando grafo...</div>
+
+<div *ngIf="!loading && graphData">
+  <app-graph-viewer [graph]="graphData"></app-graph-viewer>
+</div>

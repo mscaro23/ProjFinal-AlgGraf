@@ -1,0 +1,13 @@
+<div class="home-component">
+  <h1>Wiki Rank</h1>
+  <h3>Explore a relevância e conexões entre verbetes da Wikipedia</h3>
+
+  <app-search-bar [(value)]="query" />
+
+  <div class="depth-control">
+    <label>Profundidade do grafo: {{ depth }}</label>
+    <input type="range" min="1" max="3" [(ngModel)]="depth" />
+  </div>
+
+  <button class="primary-btn" (click)="generateGraph()">Gerar Grafo</button>
+</div>

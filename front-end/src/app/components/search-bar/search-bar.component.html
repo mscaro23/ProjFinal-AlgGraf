@@ -1,0 +1,7 @@
+<input
+  type="text"
+  class="input"
+  placeholder="Digite um verbete..."
+  [ngModel]="value"
+  (ngModelChange)="valueChange.emit($event)"
+/>

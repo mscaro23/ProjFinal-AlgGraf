@@ -1,9 +1,9 @@
 from typing import Dict, Iterable
 from collections import defaultdict
-from app.models.graph_objects import PageNode, PageLink
+from models.graph_objects import PageResponse, LinkBase
 
 
-def build_graph(nodes: Iterable[PageNode], edges: Iterable[PageLink]):
+def build_graph(nodes: Iterable[PageResponse], edges: Iterable[LinkBase]):
     """
     Constrói as estruturas de saída do grafo a partir dos nós e arestas.
     """
@@ -25,8 +25,8 @@ def build_graph(nodes: Iterable[PageNode], edges: Iterable[PageLink]):
 
 
 def pagerank(
-    nodes: Iterable[PageNode],
-    edges: Iterable[PageLink],
+    nodes: Iterable[PageResponse],
+    edges: Iterable[LinkBase],
     d: float = 0.85,
     max_iter: int = 100,
     tol: float = 1e-6,

@@ -8,8 +8,8 @@ from db.session import SessionLocal
 from db.engine import engine
 from db.base import Base
 from scraper.wiki_scraper import WikiScraper
-from services.graph_builder import save_graph
 from db.db_models import Page, Link
+from db.repositories.page import PageRepository
 
 
 def main():
@@ -18,9 +18,10 @@ def main():
 
     scraper = WikiScraper()
     session = SessionLocal()
+    repository = PageRepository(session)
 
-    start_page = "química"
-    max_depth = 2
+    start_page = "Filosofia"
+    max_depth = 3
     max_neighbors = 1000  # Limit neighbors per page to avoid explosion
 
     # Queue stores (title, depth)
@@ -60,11 +61,14 @@ def main():
                     for link in links:
                         if added_count >= max_neighbors:
                             break
-                        if (
-                            link.target_title
-                            and link.target_title not in visited_in_run
-                        ):
-                            queue.append((link.target_title, current_depth + 1))
+                        # Buscar a página alvo pelo ID para obter o título
+                        target_page = (
+                            session.query(Page)
+                            .filter(Page.page_id == link.target_page_id)
+                            .first()
+                        )
+                        if target_page and target_page.title not in visited_in_run:
+                            queue.append((target_page.title, current_depth + 1))
                             added_count += 1
                 continue
 
@@ -80,19 +84,19 @@ def main():
                         f"Page '{node.title}' (ID: {node.page_id}) already in DB. Updating..."
                     )
 
-                save_graph(session, node, edges)
-
-                # Add neighbors to queue
+                repository.save_page_with_links(node, edges)
                 if current_depth < max_depth:
                     added_count = 0
                     for edge in edges:
                         if added_count >= max_neighbors:
                             break
-                        if (
-                            edge.target_title
-                            and edge.target_title not in visited_in_run
-                        ):
-                            queue.append((edge.target_title, current_depth + 1))
+                        target_page = (
+                            session.query(Page)
+                            .filter(Page.page_id == edge.target_page_id)
+                            .first()
+                        )
+                        if target_page and target_page.title not in visited_in_run:
+                            queue.append((target_page.title, current_depth + 1))
                             added_count += 1
 
             except Exception as e:

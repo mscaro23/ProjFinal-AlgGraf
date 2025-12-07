@@ -1,6 +1,6 @@
-from app.scraper.api_client import APIClient
-from app.scraper.html_parser import HTMLParser
-from app.models.graph_objects import PageNode, LinkNode
+from scraper.api_client import APIClient
+from scraper.html_parser import HTMLParser
+from models.graph_objects import PageBase, LinkBase
 
 
 class WikiScraper:
@@ -13,23 +13,20 @@ class WikiScraper:
     def scrape_page(self, title: str):
         print(f"[WikiScraper] Scraping page: '{title}'")
 
-    def scrape_page(self, title: str):
-        print(f"[WikiScraper] Scraping page: '{title}'")
-
         # 1 metadata (and resolve title)
         metadata = self.api.fetch_metadata(title=title)
-        
+
         # Extract page data
         pages_dict = metadata["query"]["pages"]
         page_data = next(iter(pages_dict.values()))
-        
+
         if "missing" in page_data:
-             raise ValueError(f"Página '{title}' não encontrada")
+            raise ValueError(f"Página '{title}' não encontrada")
 
         page_id = page_data["pageid"]
         resolved_title = page_data["title"]
 
-        node = PageNode(
+        node = PageBase(
             page_id=page_id,
             title=resolved_title,
             url=page_data["fullurl"],
@@ -56,11 +53,10 @@ class WikiScraper:
         for target_title, anchor in extracted:
             if target_title in resolved_map:
                 target_id, resolved_target_title = resolved_map[target_title]
-                edge = LinkNode(
+                edge = LinkBase(
                     source_page_id=page_id,
                     target_page_id=target_id,
                     anchor_text=anchor,
-                    target_title=resolved_target_title,
                 )
                 edges.append(edge)
             # else: page missing or error, skip

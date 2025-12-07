@@ -19,6 +19,20 @@ def get_page_by_id_route(
     return page
 
 
+@router.get("/pages/title/{title}", response_model=PageResponse)
+def get_page_by_title_route(
+    title: str, service: PageService = Depends(get_page_service)
+):
+    """
+    Busca página por título. Se não existir no banco, faz scraping da Wikipedia.
+    """
+    page = service.get_or_scrape_page_by_title(title)
+    logger.info(f"Getting page by title '{title}': {page}")
+    if not page:
+        raise HTTPException(404, f"Page '{title}' not found and could not be scraped")
+    return page
+
+
 @router.get("/test_router")
 def test_router():
     return {"message": "Router is working"}

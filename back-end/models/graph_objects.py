@@ -13,6 +13,7 @@ Como boa prática, utilizar uma classe/model para cada tipo de requisição
 
 # ---------- PAGE ----------
 class PageBase(BaseModel):
+    page_id: int
     title: str
     url: str
     length_chars: Optional[int] = None
@@ -32,8 +33,6 @@ class PageUpdate(BaseModel):
 
 
 class PageResponse(PageBase):
-    page_id: int
-
     class Config:
         from_attributes = True
 

@@ -1,5 +1,5 @@
-from app.models.graph_objects import PageNode, PageLink
-from app.services.pagerank import build_graph, pagerank
+from models.graph_objects import PageResponse, LinkBase
+from services.pagerank import build_graph, pagerank
 
 
 
@@ -22,7 +22,7 @@ def criar_grafo_teste():
     """
 
     nodes = [
-    PageNode(
+    PageResponse(
         page_id=0,
         title="A",
         url="A",
@@ -31,7 +31,7 @@ def criar_grafo_teste():
         num_revisions=0,
         links_out_count=2,  # A -> B e A -> C
     ),
-    PageNode(
+    PageResponse(
         page_id=1,
         title="B",
         url="B",
@@ -40,7 +40,7 @@ def criar_grafo_teste():
         num_revisions=0,
         links_out_count=1,  # B -> C
     ),
-    PageNode(
+    PageResponse(
         page_id=2,
         title="C",
         url="C",
@@ -49,7 +49,7 @@ def criar_grafo_teste():
         num_revisions=0,
         links_out_count=1,  # C -> A
     ),
-    PageNode(
+    PageResponse(
         page_id=3,
         title="D",
         url="D",
@@ -61,11 +61,11 @@ def criar_grafo_teste():
 ]
 
     edges = [
-        PageLink(source_page_id=0, target_page_id=1, anchor_text="A→B"),
-        PageLink(source_page_id=0, target_page_id=2, anchor_text="A→C"),
-        PageLink(source_page_id=1, target_page_id=2, anchor_text="B→C"),
-        PageLink(source_page_id=2, target_page_id=0, anchor_text="C→A"),
-        PageLink(source_page_id=3, target_page_id=2, anchor_text="D→C"),
+        LinkBase(source_page_id=0, target_page_id=1, anchor_text="A→B"),
+        LinkBase(source_page_id=0, target_page_id=2, anchor_text="A→C"),
+        LinkBase(source_page_id=1, target_page_id=2, anchor_text="B→C"),
+        LinkBase(source_page_id=2, target_page_id=0, anchor_text="C→A"),
+        LinkBase(source_page_id=3, target_page_id=2, anchor_text="D→C"),
     ]
 
     return nodes, edges

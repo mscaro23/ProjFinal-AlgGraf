@@ -1,0 +1,38 @@
+<div class="pagerank-container">
+  <h1>O que é o PageRank?</h1>
+  <h3>Um algoritmo criado pelo Google para medir a importância de páginas na web usando a estrutura de links entre elas.</h3>
+
+  <div class="content-section">
+    <h2>1. Intuição Básica</h2>
+    <p>
+      Imagine que a internet é uma grande rede social. Cada link de uma página para outra é como um voto de confiança.
+      Quando uma página A aponta para uma página B, ela está dizendo: "Eu acho a página B importante".
+      Se muitas páginas apontam para B, ela se torna importante. E se páginas importantes apontam para B, ela se torna ainda mais importante.
+    </p>
+  </div>
+
+  <div class="content-section">
+    <h2>2. A Ideia Matemática</h2>
+    <p>
+      O PageRank atribui uma pontuação numérica a cada documento (página web), que representa sua relevância.
+      O cálculo é feito de forma iterativa, ou seja, repetida várias vezes até que os valores se estabilizem.
+    </p>
+    <div class="formula-box">
+      <code>PR(A) = (1 - d)/N + d * Σ (PR(Pi) / C(Pi))</code>
+    </div>
+    <p>
+      Onde <strong>d</strong> é o fator de amortecimento (geralmente 0.85), que simula a probabilidade de um usuário continuar clicando em links,
+      ao invés de pular para uma página aleatória.
+    </p>
+  </div>
+
+  <div class="content-section">
+    <h2>3. Como usamos no Wiki Rank</h2>
+    <p>
+      Em nosso projeto, aplicamos o PageRank ao grafo de páginas da Wikipédia. Isso nos ajuda a identificar quais são os verbetes centrais e mais influentes dentro da rede de conexões que você explora.
+      Dessa forma, não apenas encontramos o caminho entre duas páginas, mas entendemos a "popularidade" de cada passo desse caminho.
+    </p>
+  </div>
+
+  <button class="primary-btn" routerLink="/">Voltar para Home</button>
+</div>

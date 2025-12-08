@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { GraphService } from '../../services/graph.service';
 import { GraphViewerComponent } from '../../components/graph-viewer/graph-viewer.component';
 import { NgIf } from '@angular/common';
@@ -7,9 +7,9 @@ import { NgIf } from '@angular/common';
 @Component({
   selector: 'app-graph',
   standalone: true,
-  imports: [NgIf, GraphViewerComponent],
+  imports: [NgIf, GraphViewerComponent, RouterModule],
   templateUrl: './graph.page.html',
-  // styleUrl: './graph.page.scss',
+  styleUrls: ['./graph.page.scss'],
 })
 export class GraphPage implements OnInit {
   seed = '';

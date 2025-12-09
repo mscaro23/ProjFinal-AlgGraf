@@ -61,27 +61,13 @@ class GraphInput(BaseModel):
     links: List[LinkCreate]
 
 
-# ---------- ESTRUTURAS PARA PAGERANK E PATHFINDING ----------
-class PageNode(BaseModel):
-    """Estrutura de nó para cálculo de PageRank e busca de caminhos"""
-    page_id: int
-    title: str
-    url: str
-    length_chars: Optional[int] = None
-    num_editors: Optional[int] = None
-    num_revisions: Optional[int] = None
-    links_out_count: Optional[int] = None
-    links_in_count: Optional[int] = None
-
-    class Config:
-        from_attributes = True
+class GraphLink(BaseModel):
+    """Link para resposta do grafo (fonte e alvo como strings - títulos das páginas)"""
+    source: str
+    target: str
 
 
-class PageLink(BaseModel):
-    """Estrutura de aresta para cálculo de PageRank e busca de caminhos"""
-    source_page_id: int
-    target_page_id: int
-    anchor_text: Optional[str] = None
-
-    class Config:
-        from_attributes = True
+class GraphResponse(BaseModel):
+    """Resposta do grafo com nodes (títulos) e links"""
+    nodes: List[str]
+    links: List[GraphLink]

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from services.page import PageService, get_page_service
-from models.graph_objects import PageResponse
+from models.graph_objects import GraphResponse, PageResponse
 from settings.logging_setup import logger
 from db.session import get_db
 from sqlalchemy.orm import Session
@@ -35,6 +35,23 @@ def get_page_by_title_route(
     if not page:
         raise HTTPException(404, f"Page '{title}' not found and could not be scraped")
     return page
+
+
+@router.get("/graph/build", response_model=GraphResponse)
+def build_graph_route(
+    seed: str = Query(..., description="Título da página semente"),
+    depth: int = Query(1, ge=1, le=3, description="Profundidade do BFS (1-3)"),
+    service: PageService = Depends(get_page_service),
+):
+    """
+    Gera um grafo a partir do título semente e profundidade usando BFS.
+    Faz scraping das páginas necessárias se não existirem no banco.
+    """
+    logger.info(f"Building graph: seed='{seed}', depth={depth}")
+    graph = service.generate_graph(seed, depth)
+    if not graph:
+        raise HTTPException(404, f"Graph for seed '{seed}' could not be generated")
+    return graph
 
 
 @router.post("/pagerank/calculate")

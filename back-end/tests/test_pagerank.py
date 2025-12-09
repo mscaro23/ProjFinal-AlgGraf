@@ -2,8 +2,6 @@ from models.graph_objects import PageResponse, LinkBase
 from services.pagerank import build_graph, pagerank
 
 
-
-
 def criar_grafo_teste():
     """
     Cria um grafo pequeno para testar:
@@ -22,43 +20,43 @@ def criar_grafo_teste():
     """
 
     nodes = [
-    PageResponse(
-        page_id=0,
-        title="A",
-        url="A",
-        length_chars=0,
-        num_editors=0,
-        num_revisions=0,
-        links_out_count=2,  # A -> B e A -> C
-    ),
-    PageResponse(
-        page_id=1,
-        title="B",
-        url="B",
-        length_chars=0,
-        num_editors=0,
-        num_revisions=0,
-        links_out_count=1,  # B -> C
-    ),
-    PageResponse(
-        page_id=2,
-        title="C",
-        url="C",
-        length_chars=0,
-        num_editors=0,
-        num_revisions=0,
-        links_out_count=1,  # C -> A
-    ),
-    PageResponse(
-        page_id=3,
-        title="D",
-        url="D",
-        length_chars=0,
-        num_editors=0,
-        num_revisions=0,
-        links_out_count=1,  # D -> C
-    ),
-]
+        PageResponse(
+            page_id=0,
+            title="A",
+            url="A",
+            length_chars=0,
+            num_editors=0,
+            num_revisions=0,
+            links_out_count=2,  # A -> B e A -> C
+        ),
+        PageResponse(
+            page_id=1,
+            title="B",
+            url="B",
+            length_chars=0,
+            num_editors=0,
+            num_revisions=0,
+            links_out_count=1,  # B -> C
+        ),
+        PageResponse(
+            page_id=2,
+            title="C",
+            url="C",
+            length_chars=0,
+            num_editors=0,
+            num_revisions=0,
+            links_out_count=1,  # C -> A
+        ),
+        PageResponse(
+            page_id=3,
+            title="D",
+            url="D",
+            length_chars=0,
+            num_editors=0,
+            num_revisions=0,
+            links_out_count=1,  # D -> C
+        ),
+    ]
 
     edges = [
         LinkBase(source_page_id=0, target_page_id=1, anchor_text="A→B"),
@@ -112,12 +110,12 @@ def testar_pagerank():
     assert abs(soma - 1.0) < 1e-6, "Soma dos PageRanks deveria ser 1"
 
     # Ordem esperada: C > A > B > D
-    rA = ranks[0]
-    rB = ranks[1]
-    rC = ranks[2]
-    rD = ranks[3]
+    r_a = ranks[0]
+    r_b = ranks[1]
+    r_c = ranks[2]
+    r_d = ranks[3]
 
-    assert rC > rA > rB > rD, "Ordem de importância esperada: C > A > B > D"
+    assert r_c > r_a > r_b > r_d, "Ordem de importância esperada: C > A > B > D"
 
     print("✅ pagerank parece consistente (ordem e soma ok).\n")
 

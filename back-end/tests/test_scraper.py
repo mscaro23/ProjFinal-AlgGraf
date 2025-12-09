@@ -1,5 +1,5 @@
-from app.scraper.wiki_scraper import WikiScraper
-from app.models.graph_objects import PageNode, LinkNode
+from scraper.wiki_scraper import WikiScraper
+from models.graph_objects import PageNode, LinkNode
 
 
 def test_scrape_page():

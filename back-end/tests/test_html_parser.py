@@ -1,4 +1,4 @@
-from app.scraper.html_parser import HTMLParser
+from scraper.html_parser import HTMLParser
 
 HTML_SAMPLE = """
 <p>A engenharia é relacionada ao <a href="/wiki/Desenho">desenho</a>

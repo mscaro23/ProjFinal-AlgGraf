@@ -1,5 +1,88 @@
-<div *ngIf="loading">Carregando grafo...</div>
+<div class="graph-page">
+  <div *ngIf="loading" class="loading">Carregando grafo...</div>
 
-<div *ngIf="!loading && graphData">
-  <app-graph-viewer [graph]="graphData"></app-graph-viewer>
+  <div *ngIf="!loading && graphData" class="graph-container">
+    <app-graph-viewer [graph]="graphData"></app-graph-viewer>
+  </div>
+
+  <!-- Seção de PageRank -->
+  <div class="actions-section">
+    <div class="action-card">
+      <h3>Calcular PageRank</h3>
+      <p>Calcula e atualiza o PageRank para todas as páginas no banco de dados.</p>
+      <button 
+        class="primary-btn" 
+        (click)="calculatePageRank()" 
+        [disabled]="calculatingPageRank">
+        {{ calculatingPageRank ? 'Calculando...' : 'Calcular PageRank' }}
+      </button>
+      
+      <div *ngIf="pageRankResult" class="result-box">
+        <h4>Resultado:</h4>
+        <p><strong>Páginas atualizadas:</strong> {{ pageRankResult.pages_updated }}</p>
+        <p><strong>Score total:</strong> {{ pageRankResult.total_score?.toFixed(6) }}</p>
+        <p><strong>Score mínimo:</strong> {{ pageRankResult.min_score?.toFixed(6) }}</p>
+        <p><strong>Score máximo:</strong> {{ pageRankResult.max_score?.toFixed(6) }}</p>
+      </div>
+    </div>
+
+    <!-- Seção de Busca de Caminhos -->
+    <div class="action-card">
+      <h3>Buscar Caminhos</h3>
+      <p>Encontra o caminho mais curto e o mais lógico entre duas páginas.</p>
+      
+      <div class="form-group">
+        <label for="sourcePage">Página Origem (título):</label>
+        <input 
+          type="text" 
+          id="sourcePage"
+          [(ngModel)]="sourcePageTitle" 
+          placeholder="Ex: Filosofia"
+          [disabled]="findingPaths" />
+      </div>
+      
+      <div class="form-group">
+        <label for="targetPage">Página Destino (título):</label>
+        <input 
+          type="text" 
+          id="targetPage"
+          [(ngModel)]="targetPageTitle" 
+          placeholder="Ex: Matemática"
+          [disabled]="findingPaths" />
+      </div>
+      
+      <button 
+        class="primary-btn" 
+        (click)="findPaths()" 
+        [disabled]="findingPaths || !sourcePageTitle.trim() || !targetPageTitle.trim()">
+        {{ findingPaths ? 'Buscando...' : 'Buscar Caminhos' }}
+      </button>
+      
+      <div *ngIf="pathsResult" class="result-box">
+        <h4>Resultados:</h4>
+        
+        <div *ngIf="pathsResult.shortest_path" class="path-result">
+          <h5>Caminho Mais Curto ({{ pathsResult.shortest_length }} páginas):</h5>
+          <ol>
+            <li *ngFor="let page of pathsResult.shortest_path">
+              <strong>{{ page.title }}</strong> (ID: {{ page.page_id }}, PageRank: {{ page.pagerank_score?.toFixed(6) }})
+            </li>
+          </ol>
+        </div>
+        
+        <div *ngIf="pathsResult.logical_path" class="path-result">
+          <h5>Caminho Mais Lógico ({{ pathsResult.logical_length }} páginas):</h5>
+          <ol>
+            <li *ngFor="let page of pathsResult.logical_path">
+              <strong>{{ page.title }}</strong> (ID: {{ page.page_id }}, PageRank: {{ page.pagerank_score?.toFixed(6) }})
+            </li>
+          </ol>
+        </div>
+        
+        <div *ngIf="!pathsResult.shortest_path && !pathsResult.logical_path" class="error-message">
+          Nenhum caminho encontrado entre as páginas.
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

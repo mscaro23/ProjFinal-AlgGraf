@@ -15,7 +15,7 @@ db_base.Base.metadata.create_all(bind=db_engine.engine)
 
 
 app = FastAPI()
-app.include_router(api_router)
+app.include_router(api_router, prefix="/api")
 
 server = Server(
     Config(

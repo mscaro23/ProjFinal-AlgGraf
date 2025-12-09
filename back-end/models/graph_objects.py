@@ -63,11 +63,19 @@ class GraphInput(BaseModel):
 
 class GraphLink(BaseModel):
     """Link para resposta do grafo (fonte e alvo como strings - títulos das páginas)"""
+
     source: str
     target: str
 
 
 class GraphResponse(BaseModel):
     """Resposta do grafo com nodes (títulos) e links"""
+
     nodes: List[str]
     links: List[GraphLink]
+
+
+class PageRankResponse(BaseModel):
+    """Resposta do cálculo de PageRank"""
+
+    pagerank: dict[str, float]

@@ -1,1 +1,22 @@
-<svg #svgRef width="100%" height="600"></svg>
+<div class="graph-viewer-container">
+  @if (graph && graph.nodes.length > maxNodes) {
+    <div class="controls">
+      <div class="control-item">
+        <label for="maxNodesSlider">Limite de nós: {{ maxNodes }}</label>
+        <input 
+          id="maxNodesSlider"
+          type="range" 
+          min="20" 
+          [max]="graph.nodes.length" 
+          [(ngModel)]="maxNodes"
+          (change)="renderGraph()"
+        />
+      </div>
+      <div class="info">
+        Mostrando {{ Math.min(maxNodes, graph.nodes.length) }} de {{ graph.nodes.length }} nós
+      </div>
+    </div>
+  }
+  <svg #svgRef width="100%" height="700"></svg>
+  <div class="zoom-hint">💡 Use scroll para zoom, arraste para mover</div>
+</div>

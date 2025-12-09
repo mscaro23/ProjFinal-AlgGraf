@@ -12,6 +12,10 @@ export interface GraphData {
   links: GraphLink[];
 }
 
+export interface PageRankResponse {
+  pagerank: { [title: string]: number };
+}
+
 @Injectable({ providedIn: 'root' })
 export class GraphService {
   private readonly baseUrl = 'http://localhost:8000/api/graph';
@@ -22,5 +26,9 @@ export class GraphService {
     return this.http.get<GraphData>(`${this.baseUrl}/build`, {
       params: { seed, depth: depth.toString() },
     });
+  }
+
+  calculatePageRank(nodes: string[]): Observable<PageRankResponse> {
+    return this.http.post<PageRankResponse>(`${this.baseUrl}/pagerank`, nodes);
   }
 }

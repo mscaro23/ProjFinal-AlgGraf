@@ -1,6 +1,4 @@
 <div class="graph-container-wrapper">
-  <a routerLink="/" class="back-btn">Voltar</a>
-
   <div *ngIf="loading">Carregando grafo...</div>
 
   <div *ngIf="error" class="error-message">
@@ -9,6 +7,21 @@
   </div>
 
   <div *ngIf="!loading && !error && graphData">
-    <app-graph-viewer [graph]="graphData"></app-graph-viewer>
+    <div class="graph-controls">
+      <a routerLink="/" class="back-btn">Voltar</a>
+      <button 
+        (click)="calculatePageRank()" 
+        [disabled]="calculatingPageRank"
+        class="pagerank-btn">
+        {{ calculatingPageRank ? 'Calculando...' : 'Calcular PageRank' }}
+      </button>
+      <span *ngIf="pageRankScores" class="pagerank-status">
+        ✓ PageRank calculado
+      </span>
+    </div>
+    <app-graph-viewer 
+      [graph]="graphData"
+      [pageRankScores]="pageRankScores">
+    </app-graph-viewer>
   </div>
 </div>

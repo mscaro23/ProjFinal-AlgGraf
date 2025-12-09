@@ -1,3 +1,4 @@
+import logging
 from fastapi import Depends
 from db.repositories.page import (
     PageRepository,
@@ -13,6 +14,8 @@ from models.graph_objects import (
 from scraper.wiki_scraper import WikiScraper
 from services.graph_builder import save_graph
 from db.db_models import Page, Link
+from sqlalchemy import text
+from services.pagerank import pagerank
 
 
 class PageService:
@@ -171,6 +174,74 @@ class PageService:
             return None
         except Exception as e:
             print(f"[PageService] Erro ao fazer scraping: {e}")
+            return None
+
+    def calculate_pagerank(self, nodes: list[str]) -> dict[str, float] | None:
+        """
+        Calcula o PageRank para um conjunto de nós (títulos).
+        Atualiza o banco de dados com os scores e retorna o resultado.
+        """
+        try:
+            logging.info(f"[PageService] Calculando PageRank para {len(nodes)} nós...")
+
+            # Buscar page_ids dos títulos
+            title_to_id = {}
+            page_responses = []
+
+            for title in nodes:
+                page_dict = self.repository.get_page_by_title(title)
+                if page_dict:
+                    title_to_id[title] = page_dict["page_id"]
+                    page_responses.append(PageResponse(**page_dict))
+
+            if not page_responses:
+                logging.warning(
+                    "[PageService] Nenhuma página encontrada para cálculo de PageRank"
+                )
+                return None
+
+            # Buscar links entre essas páginas
+            page_ids = list(title_to_id.values())
+            _, links_dicts = self.repository.get_subgraph(page_ids)
+
+            # Converter para LinkBase
+            from models.graph_objects import LinkBase
+
+            links = [
+                LinkBase(
+                    source_page_id=link["source_page_id"],
+                    target_page_id=link["target_page_id"],
+                    anchor_text=link.get("anchor_text"),
+                )
+                for link in links_dicts
+            ]
+
+            pagerank_scores = pagerank(page_responses, links)
+
+            # Atualizar banco de dados
+            for page_id, score in pagerank_scores.items():
+                query = text(
+                    "UPDATE pages SET pagerank_score = :score WHERE page_id = :page_id"
+                )
+                self.repository.db_session.execute(
+                    query, {"score": score, "page_id": page_id}
+                )
+
+            self.repository.db_session.commit()
+
+            id_to_title = {v: k for k, v in title_to_id.items()}
+            result = {
+                id_to_title[page_id]: score
+                for page_id, score in pagerank_scores.items()
+            }
+
+            logging.info(
+                f"[PageService] PageRank calculado e salvo para {len(result)} páginas"
+            )
+            return result
+
+        except Exception as e:
+            logging.error(f"[PageService] Erro ao calcular PageRank: {e}")
             return None
 
 

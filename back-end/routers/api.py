@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Body
 
 from services.page import PageService, get_page_service
-from models.graph_objects import GraphResponse, PageResponse
+from models.graph_objects import GraphResponse, PageResponse, PageRankResponse
 from settings.logging_setup import logger
 
 
@@ -48,6 +48,22 @@ def build_graph_route(
     if not graph:
         raise HTTPException(404, f"Graph for seed '{seed}' could not be generated")
     return graph
+
+
+@router.post("/graph/pagerank", response_model=PageRankResponse)
+def calculate_pagerank_route(
+    nodes: list[str] = Body(..., description="Lista de títulos dos nós do grafo"),
+    service: PageService = Depends(get_page_service),
+):
+    """
+    Calcula o PageRank para os nós fornecidos.
+    Atualiza o banco de dados e retorna os scores.
+    """
+    logger.info(f"Calculating PageRank for {len(nodes)} nodes")
+    pagerank_scores = service.calculate_pagerank(nodes)
+    if not pagerank_scores:
+        raise HTTPException(400, "Could not calculate PageRank")
+    return PageRankResponse(pagerank=pagerank_scores)
 
 
 @router.get("/test_router")

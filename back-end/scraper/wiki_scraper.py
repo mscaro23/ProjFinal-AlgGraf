@@ -10,11 +10,11 @@ class WikiScraper:
         self.parser = HTMLParser()
         print("[WikiScraper] Initialized.")
 
-    def scrape_page(self, title: str):
+    def scrape_page(self, title: str = None, page_id: int = None):
         print(f"[WikiScraper] Scraping page: '{title}'")
 
-        # 1 metadata (and resolve title)
-        metadata = self.api.fetch_metadata(title=title)
+        # 1 metadata (and resolve title or page_id)
+        metadata = self.api.fetch_metadata(title=title, page_id=page_id)
 
         # Extract page data
         pages_dict = metadata["query"]["pages"]

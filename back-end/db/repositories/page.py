@@ -20,6 +20,25 @@ class PageRepository:
         result = self.db_session.execute(query, {"title": title})
         return result.mappings().first()
 
+    def get_subgraph(self, page_ids: list[int]) -> tuple[list[dict], list[dict]]:
+        """Retorna todas as páginas e links de um conjunto de page_ids."""
+        if not page_ids:
+            return [], []
+        
+        # Buscar páginas
+        pages_query = text("SELECT * FROM pages WHERE page_id = ANY(:page_ids)")
+        pages_result = self.db_session.execute(pages_query, {"page_ids": page_ids})
+        pages = [dict(row) for row in pages_result.mappings()]
+        
+        # Buscar links entre essas páginas
+        links_query = text(
+            "SELECT * FROM links WHERE source_page_id = ANY(:page_ids) AND target_page_id = ANY(:page_ids)"
+        )
+        links_result = self.db_session.execute(links_query, {"page_ids": page_ids})
+        links = [dict(row) for row in links_result.mappings()]
+        
+        return pages, links
+
     def save_page(self, page_data: PageBase) -> None:
         """Salva ou atualiza uma página no banco de dados."""
         existing_page = (

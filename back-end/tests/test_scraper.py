@@ -1,5 +1,5 @@
-from app.scraper.wiki_scraper import WikiScraper
-from app.models.graph_objects import PageNode, PageLink
+from scraper.wiki_scraper import WikiScraper
+from models.graph_objects import PageNode, LinkNode
 
 
 def test_scrape_page():
@@ -15,7 +15,7 @@ def test_scrape_page():
     assert node.links_out_count == len(edges)
 
     # Testa algumas arestas
-    assert all(isinstance(e, PageLink) for e in edges)
+    assert all(isinstance(e, LinkNode) for e in edges)
     assert len(edges) > 5  # A página com certeza tem >5 links
 
     # Verifica se alguma aresta leva a "Desenho" (como no texto)

@@ -13,6 +13,7 @@ Como boa prática, utilizar uma classe/model para cada tipo de requisição
 
 # ---------- PAGE ----------
 class PageBase(BaseModel):
+    page_id: int
     title: str
     url: str
     length_chars: Optional[int] = None
@@ -32,8 +33,6 @@ class PageUpdate(BaseModel):
 
 
 class PageResponse(PageBase):
-    page_id: int
-
     class Config:
         from_attributes = True
 
@@ -60,3 +59,23 @@ class LinkResponse(LinkBase):
 class GraphInput(BaseModel):
     pages: List[PageCreate]
     links: List[LinkCreate]
+
+
+class GraphLink(BaseModel):
+    """Link para resposta do grafo (fonte e alvo como strings - títulos das páginas)"""
+
+    source: str
+    target: str
+
+
+class GraphResponse(BaseModel):
+    """Resposta do grafo com nodes (títulos) e links"""
+
+    nodes: List[str]
+    links: List[GraphLink]
+
+
+class PageRankResponse(BaseModel):
+    """Resposta do cálculo de PageRank"""
+
+    pagerank: dict[str, float]

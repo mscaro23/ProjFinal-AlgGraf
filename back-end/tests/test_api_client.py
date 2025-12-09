@@ -1,4 +1,4 @@
-from app.scraper.api_client import APIClient
+from scraper.api_client import APIClient
 
 
 def test_resolve_title():

@@ -1,0 +1,54 @@
+.graph-viewer-container {
+  width: 100%;
+}
+
+.controls {
+  background: rgba(15, 23, 42, 0.8); /* Slate 900 with opacity */
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #e0e0e0;
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+
+  label {
+    min-width: 150px;
+    font-weight: 500;
+    color: #e0e0e0;
+  }
+
+  input[type="range"] {
+    flex: 1;
+    cursor: pointer;
+  }
+}
+
+.info {
+  font-size: 0.9em;
+  color: #d0d0d0;
+  font-style: italic;
+}
+
+.zoom-hint {
+  text-align: center;
+  font-size: 0.85em;
+  color: #888;
+  margin-top: 10px;
+  padding: 5px;
+}
+
+svg {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.8); /* Slate 900 with opacity */
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}

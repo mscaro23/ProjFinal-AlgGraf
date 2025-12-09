@@ -1,16 +1,34 @@
 import { Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import * as d3 from 'd3';
+import { SimulationNodeDatum } from 'd3';
+
+interface D3Node extends SimulationNodeDatum {
+  id: string;
+  radius: number;
+  x?: number;
+  y?: number;
+}
 
 @Component({
   selector: 'app-graph-viewer',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './graph-viewer.component.html',
-  // styleUrl: './graph-viewer.component.scss',
+  styleUrl: './graph-viewer.component.scss',
 })
 export class GraphViewerComponent implements OnChanges {
   @Input() graph: any;
+  @Input() pageRankScores: { [title: string]: number } | null = null;
 
   @ViewChild('svgRef') svgRef!: ElementRef<SVGElement>;
+
+  // Controles de visualização
+  maxNodes = 10; // Limite de nós a renderizar
+  minPageRankThreshold = 0;
+  Math = Math;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.graph) {
@@ -24,10 +42,47 @@ export class GraphViewerComponent implements OnChanges {
 
     const { width, height } = this.svgRef.nativeElement.getBoundingClientRect();
 
-    const nodes = this.graph.nodes.map((t: string) => ({ id: t }));
-    const links = this.graph.links.map((l: any) => ({ ...l }));
+    // Filtrar nós se houver muitos
+    let filteredNodes = [...this.graph.nodes];
+    
+    if (filteredNodes.length > this.maxNodes) {
+      if (this.pageRankScores) {
+        filteredNodes = filteredNodes
+          .filter(t => (this.pageRankScores![t] || 0) >= this.minPageRankThreshold)
+          .sort((a, b) => (this.pageRankScores![b] || 0) - (this.pageRankScores![a] || 0))
+          .slice(0, this.maxNodes);
+      } else {
+        const sorted = [...filteredNodes].sort((a, b) => a.localeCompare(b));
+        filteredNodes = sorted.slice(0, this.maxNodes);
+      }
+      
+      console.log(`Renderizando ${filteredNodes.length} de ${this.graph.nodes.length} nós`);
+    }
 
-    // Simulation setup
+    const nodeSet = new Set(filteredNodes);
+
+    const nodes: D3Node[] = filteredNodes.map((t: string) => ({ 
+      id: t,
+      radius: this.pageRankScores ? (this.pageRankScores[t] || 0.01) * 200 + 5 : 10,
+      x: undefined,
+      y: undefined
+    }));
+    
+    // Filtrar links para incluir apenas nós visíveis
+    const links = this.graph.links
+      .filter((l: any) => nodeSet.has(l.source) && nodeSet.has(l.target))
+      .map((l: any) => ({ ...l }));
+
+    const g = svg.append('g');
+
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.1, 4]) // Min e max zoom
+      .on('zoom', (event) => {
+        g.attr('transform', event.transform);
+      });
+
+    svg.call(zoom as any);
+
     const sim = d3
       .forceSimulation(nodes)
       .force(
@@ -35,16 +90,16 @@ export class GraphViewerComponent implements OnChanges {
         d3
           .forceLink(links)
           .id((d: any) => d.id)
-          .distance(150),
+          .distance(100), // Distância menor para grafos grandes
       )
-      .force('charge', d3.forceManyBody().strength(-300))
+      .force('charge', d3.forceManyBody().strength(-200))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collide', d3.forceCollide(30)); 
+      .force('collide', d3.forceCollide().radius((d: any) => d.radius + 10));
 
-    // Groups for layering
-    const linkGroup = svg.append('g').attr('class', 'links');
-    const nodeGroup = svg.append('g').attr('class', 'nodes');
-    const labelGroup = svg.append('g').attr('class', 'labels');
+    // Groups for layering (dentro do container g)
+    const linkGroup = g.append('g').attr('class', 'links');
+    const nodeGroup = g.append('g').attr('class', 'nodes');
+    const labelGroup = g.append('g').attr('class', 'labels');
 
     // Draw Links
     const link = linkGroup
@@ -62,7 +117,7 @@ export class GraphViewerComponent implements OnChanges {
       .data(nodes)
       .enter()
       .append('circle')
-      .attr('r', 15) // Increased size
+      .attr('r', (d: any) => d.radius || 15) // Usa raio do PageRank ou padrão
       .attr('fill', '#4a6cf7') // Primary color
       .attr('stroke', '#fff')
       .attr('stroke-width', 2)
@@ -85,19 +140,19 @@ export class GraphViewerComponent implements OnChanges {
     // Hover Interactions
     node
       .on('mouseover', (event: any, d: any) => {
-        // Highlight current node
+        // Highlight current node (aumenta 5px do raio original)
         d3.select(event.currentTarget)
           .transition()
           .duration(200)
-          .attr('r', 20) // Larger highlight
+          .attr('r', d.radius + 5)
           .attr('fill', '#ff6b6b');
 
         // Find neighbors
         const linkedNodeIds = new Set<string>();
-        links.forEach((l: any) => {
+        for (const l of links) {
           if (l.source.id === d.id) linkedNodeIds.add(l.target.id);
           if (l.target.id === d.id) linkedNodeIds.add(l.source.id);
-        });
+        }
 
         // Dim unrelated nodes and links
         node.style('opacity', (n: any) => (n.id === d.id || linkedNodeIds.has(n.id) ? 1 : 0.2));
@@ -118,11 +173,11 @@ export class GraphViewerComponent implements OnChanges {
         );
       })
       .on('mouseout', (event: any, d: any) => {
-        // Reset node style
+        // Reset node style (volta ao raio original)
         d3.select(event.currentTarget)
           .transition()
           .duration(200)
-          .attr('r', 15) // Reset to new default size
+          .attr('r', d.radius)
           .attr('fill', '#4a6cf7');
 
         // Reset all styles
@@ -152,11 +207,11 @@ export class GraphViewerComponent implements OnChanges {
 
 
     sim.on('tick', () => {
-      // Constrain nodes within bounds
-      nodes.forEach((d:any) => {
-         d.x = Math.max(8, Math.min(width - 8, d.x));
-         d.y = Math.max(8, Math.min(height - 8, d.y));
-      });
+      // Constrain nodes within bounds (área expandida)
+      for (const d of nodes) {
+         d.x = Math.max(-width, Math.min(width * 1.1, d.x!));
+         d.y = Math.max(-height, Math.min(height * 1.1, d.y!));
+      }
 
       node.attr('cx', (d: any) => d.x).attr('cy', (d: any) => d.y);
       link

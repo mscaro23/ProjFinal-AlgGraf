@@ -3,8 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 
-Component;
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -15,7 +13,7 @@ export class HomePage {
   query: string = '';
   depth: number = 1;
 
-  constructor(private router: Router) { }
+  constructor(private readonly router: Router) { }
 
   generateGraph() {
     if (!this.query.trim()) return;

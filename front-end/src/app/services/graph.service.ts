@@ -2,15 +2,25 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface GraphLink {
+  source: string;
+  target: string;
+}
+
+export interface GraphData {
+  nodes: string[];
+  links: GraphLink[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class GraphService {
-  private baseUrl = 'http://localhost:8000/api/graph';
+  private readonly baseUrl = 'http://localhost:8000/api/graph';
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
-  buildGraph(seed: string, depth: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/build`, {
-      params: { seed, depth },
+  buildGraph(seed: string, depth: number): Observable<GraphData> {
+    return this.http.get<GraphData>(`${this.baseUrl}/build`, {
+      params: { seed, depth: depth.toString() },
     });
   }
 }

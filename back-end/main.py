@@ -15,13 +15,29 @@ db_base.Base.metadata.create_all(bind=db_engine.engine)
 
 
 app = FastAPI()
-app.include_router(api_router)
+
+# CORS - Configuração completa para desenvolvimento
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:4200",
+        "http://127.0.0.1:4200",
+    ],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+)
+
+# Adicionar routers depois do CORS
+app.include_router(api_router, prefix="/api")
+
 
 server = Server(
     Config(
         "main:app",
         host="0.0.0.0",
-        port=8080,
+        port=8000,
         proxy_headers=True,
         forwarded_allow_ips="*",
         reload=True,
@@ -46,20 +62,6 @@ async def custom_error_handling(request: Request, exc: Exception):
         {"detail": "Se o erro persistir, contate o suporte"},
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
     )
-
-
-# Set all CORS enabled origins
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=[
-#         "http://localhost",
-#         "http://localhost:4200",
-#         "http://localhost:4200/",
-#     ],
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
 
 
 async def catch_exceptions_middleware(request: Request, call_next):

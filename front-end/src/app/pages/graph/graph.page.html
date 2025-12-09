@@ -1,5 +1,9 @@
-<div *ngIf="loading">Carregando grafo...</div>
+<div class="graph-container-wrapper">
+  <a routerLink="/" class="back-btn">Voltar</a>
 
-<div *ngIf="!loading && graphData">
-  <app-graph-viewer [graph]="graphData"></app-graph-viewer>
+  <div *ngIf="loading">Carregando grafo...</div>
+
+  <div *ngIf="!loading && graphData">
+    <app-graph-viewer [graph]="graphData"></app-graph-viewer>
+  </div>
 </div>

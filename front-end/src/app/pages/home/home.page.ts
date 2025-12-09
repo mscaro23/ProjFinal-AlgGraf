@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 
 Component;
@@ -9,7 +9,7 @@ Component;
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
-  imports: [FormsModule, SearchBarComponent]
+  imports: [FormsModule, SearchBarComponent, RouterModule]
 })
 export class HomePage {
   query: string = '';
